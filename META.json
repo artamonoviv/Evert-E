@@ -52,6 +52,20 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/artamonoviv/Evert-E/issues"
+      },
+      "homepage" : "https://github.com/artamonoviv/Evert-E",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/artamonoviv/Evert-E.git",
+         "web" : "https://github.com/artamonoviv/Evert-E"
+      }
+   },
    "version" : "0.001",
+   "x_contributors" : [
+      "Ivan Artamonov <ivan.s.artamonov@gmail.com>"
+   ],
    "x_serialization_backend" : "JSON::PP version 2.27400"
 }

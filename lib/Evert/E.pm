@@ -6,7 +6,7 @@ use v5.10;
 
 use Exporter qw(import);
 
-our $VERSION = '1.00';
+our $VERSION = '0.001';
 our @EXPORT_OK=qw(apply_filter do_action add_operation af da);
 
 our $AUTOLOAD;
