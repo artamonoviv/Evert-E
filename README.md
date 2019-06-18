@@ -4,7 +4,7 @@ Evert::E - a heart of the lightweight platform for building loosely-coupled even
 
 # VERSION
 
-version 0.001
+version 0.002
 
 # SYNOPSIS
 

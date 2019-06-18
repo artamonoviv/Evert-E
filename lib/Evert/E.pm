@@ -6,7 +6,7 @@ use v5.10;
 
 use Exporter qw(import);
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 our @EXPORT_OK=qw(apply_filter do_action add_operation af da);
 
 our $AUTOLOAD;
@@ -46,6 +46,8 @@ sub do_action($;@) # event name, params
 
 	$events{$name}{"count"}++;
 
+	my @a=@_;
+
 	foreach my $priority (sort {$a <=> $b} keys %{$events{$name}{"handlers"}})
 	{
 		my @handlers=grep {defined($_)} @{$events{$name}{"handlers"}{$priority}};
@@ -61,13 +63,13 @@ sub do_action($;@) # event name, params
 
 				if (!$handler->{async} || !defined($pid = fork())) # Be carefull of using async # If forking fails
 				{
-					&{$handler->{sub}}({  name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @_[1 .. $#_]);
+					&{$handler->{sub}}({  name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @a[1 .. $#_]);
 				}
 				else
 				{
 					if ($pid==0) # if child
 					{
-						&{$handler->{async_callback}}(&{$handler->{sub}}({ name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @_[1 .. $#_]), @_);
+						&{$handler->{async_callback}}(&{$handler->{sub}}({ name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @a[1 .. $#_]), @a);
 						exit;
 					}
 				}
@@ -116,6 +118,8 @@ sub do_sync_action($;@) # event name, params
 
 	$events{$name}{"count"}++;
 
+	my @a=@_;
+
 	foreach my $priority (sort {$a <=> $b} keys %{$events{$name}{"handlers"}})
 	{
 
@@ -128,7 +132,7 @@ sub do_sync_action($;@) # event name, params
 			eval
 			{
 
-				&{$handler->{sub}}({  name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @_[1 .. $#_]);
+				&{$handler->{sub}}({  name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @a[1 .. $#_]);
 
 				$count++;
 			};
@@ -154,6 +158,8 @@ sub do_async_action($;@) # event name, params
 
 	$events{$name}{"count"}++;
 
+	my @a=@_;
+
 	foreach my $priority (sort {$a <=> $b} keys %{$events{$name}{"handlers"}})
 	{
 
@@ -170,13 +176,13 @@ sub do_async_action($;@) # event name, params
 
 				if (!defined($pid = fork())) # Be carefull in using async # Forking fails
 				{
-					&{$handler->{sub}}({ name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @_[1 .. $#_]);
+					&{$handler->{sub}}({ name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @a[1 .. $#_]);
 				}
 				else
 				{
 					if (!$pid) # if child
 					{
-						&{$handler->{async_callback}}(&{$handler->{sub}}({ name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @_[1 .. $#_]), @_);
+						&{$handler->{async_callback}}(&{$handler->{sub}}({ name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, @a[1 .. $#_]), @a);
 						exit;
 					}
 				}
@@ -216,6 +222,8 @@ sub apply_filter($;@) # event name, content to transform, params
 
 		$events{$name}{"count"}++;
 
+		my @a=@_;
+
 		foreach my $priority (sort {$a <=> $b} keys %{$events{$name}{"handlers"}})
 		{
 			my @handlers=grep {defined($_)} @{$events{$name}{"handlers"}{$priority}};
@@ -223,7 +231,7 @@ sub apply_filter($;@) # event name, content to transform, params
 			{
 				eval
 				{
-					$content = &{$handler->{sub}}({ name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, $content, @_[2 .. $#_]);
+					$content = &{$handler->{sub}}({ name => $name, package=>$package, filename=>$filename, line=>$line, handler=>$handler }, $content, @a[2 .. $#_]);
 				};
 				do_action("evert_error", {name=>$name, handler=>$handler, error=>$@}) if ($@ && $name ne "evert_error");
 			}
