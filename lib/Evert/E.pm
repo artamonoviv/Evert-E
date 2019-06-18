@@ -893,6 +893,10 @@ This ability is necessary if you need to replace Evert::E by more advanced modul
 
 So if you have a plan to scale your system up, it's a good practice to use exported names. Then you can replace Evert::E by another module only in one place of the code.
 
+=head1 INSTALLATION
+
+You can install Evert::Init by command: cpanm https://github.com/artamonoviv/Evert-E/tarball/master
+
 =head1 AUTHOR
 
 Ivan Artamonov, <ivan.s.artamonov {at} gmail.com>
